@@ -66,7 +66,7 @@ CULTURAL_INFO = {
 def create_model():
     """Crea un modelo CNN basado en MobileNetV2 con transfer learning"""
     # Usar MobileNetV2 como modelo base (eficiente para dispositivos móviles)
-    base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+    base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(160, 160, 3))
     
     # Congelar las capas del modelo base
     for layer in base_model.layers:
