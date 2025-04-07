@@ -22,11 +22,11 @@ import io
 app = Flask(__name__)
 
 # Configuración
-IMG_SIZE = (160, 160)
-BATCH_SIZE = 16
+IMG_SIZE = (224, 224)
+BATCH_SIZE = 32
 EPOCHS = 50
 NUM_CLASSES = 13
-K_FOLDS = 3 # Número de folds para validación cruzada
+K_FOLDS = 5  # Número de folds para validación cruzada
 
 CLASSES = [
     "Huipil de Gala Istmeño Tradicional",
