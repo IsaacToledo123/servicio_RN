@@ -22,11 +22,11 @@ import io
 app = Flask(__name__)
 
 # Configuración
-IMG_SIZE = (224, 224)
-BATCH_SIZE = 32
+IMG_SIZE = (160, 160)
+BATCH_SIZE = 8
 EPOCHS = 50
 NUM_CLASSES = 13
-K_FOLDS = 5  # Número de folds para validación cruzada
+K_FOLDS = 3  # Número de folds para validación cruzada
 
 CLASSES = [
     "Huipil de Gala Istmeño Tradicional",
@@ -133,7 +133,7 @@ def prepare_cross_validation_data(dataset_dir):
     
     return images, labels_one_hot, class_indices
 
-def cross_validation_train(images, labels, n_folds=5):
+def cross_validation_train(images, labels, n_folds=3):
     """Realiza entrenamiento con validación cruzada"""
     kfold = KFold(n_splits=n_folds, shuffle=True, random_state=42)
     fold_no = 1
