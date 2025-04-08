@@ -395,18 +395,29 @@ def predict():
             
         if 'image' not in data:
             logging.error("No se proporcionó ninguna imagen en el JSON")
-            print("o se proporcionó ninguna imagen en el JSON")
+            print("No se proporcionó ninguna imagen en el JSON")
             return jsonify({'error': 'No se proporcionó ninguna imagen'}), 400
         
-        # Decodificar la imagen
+        # Decodificar la imagen con manejo específico para el formato enviado desde Android
         try:
             image_data = data['image']
-            # Verificar si la cadena base64 tiene el prefijo (data:image/jpeg;base64,)
-            if ',' in image_data:
-                image_data = image_data.split(',')[1]
+            # Mejor manejo del prefijo de datos URI
+            if image_data.startswith('data:image/'):
+                # Extrae solo la parte base64 después de la coma
+                image_data = image_data.split(',', 1)[1]
                 
-            image_bytes = base64.b64decode(image_data)
+            # Decodificar con manejo de excepciones más específico
+            try:
+                image_bytes = base64.b64decode(image_data)
+            except Exception as e:
+                logging.error(f"Error específico en la decodificación base64: {str(e)}")
+                return jsonify({'error': f'Error en formato base64: {str(e)}'}), 400
+                
             logging.info(f"Imagen decodificada: {len(image_bytes)} bytes")
+            
+            if len(image_bytes) == 0:
+                return jsonify({'error': 'Imagen vacía después de decodificar'}), 400
+                
         except Exception as e:
             logging.error(f"Error al decodificar base64: {str(e)}")
             return jsonify({'error': f'Error al decodificar la imagen: {str(e)}'}), 400
