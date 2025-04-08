@@ -26,6 +26,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 app = Flask(__name__)
 
 # Configuración
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB limit
+
 IMG_SIZE = (160, 160)
 BATCH_SIZE = 16
 EPOCHS = 50
@@ -72,18 +74,17 @@ def create_model():
     # Usar MobileNetV2 como modelo base con pesos pre-entrenados
     base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(160, 160, 3))
     
-    # Fine-tuning: Descongelamos las últimas capas desde el principio
-    for layer in base_model.layers[:-50]:  # Congelar solo las primeras capas
+   
+    for layer in base_model.layers[:-50]:  
         layer.trainable = False
-    for layer in base_model.layers[-50:]:  # Descongelar las últimas capas
+    for layer in base_model.layers[-50:]:  
         layer.trainable = True
     
-    # Construir un modelo más potente
     model = Sequential([
         base_model,
         GlobalAveragePooling2D(),
         BatchNormalization(),
-        Dense(1024, activation='relu'),  # Capa más grande
+        Dense(1024, activation='relu'),
         Dropout(0.5),
         BatchNormalization(),
         Dense(512, activation='relu'),
@@ -93,11 +94,10 @@ def create_model():
         Dense(NUM_CLASSES, activation='softmax')
     ])
     
-    # Compilar el modelo con un optimizador más adecuado para fine-tuning
     model.compile(
-        optimizer=Adam(learning_rate=0.0001),  # Learning rate más bajo
+        optimizer=Adam(learning_rate=0.0001), 
         loss='categorical_crossentropy',
-        metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]  # Métricas adicionales
+        metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]  
     )
     
     return model
@@ -390,10 +390,12 @@ def predict():
         data = request.json
         if not data:
             logging.error("No se recibieron datos JSON")
+            print("No se recibieron datos JSON")
             return jsonify({'error': 'No se recibieron datos JSON'}), 400
             
         if 'image' not in data:
             logging.error("No se proporcionó ninguna imagen en el JSON")
+            print("o se proporcionó ninguna imagen en el JSON")
             return jsonify({'error': 'No se proporcionó ninguna imagen'}), 400
         
         # Decodificar la imagen
