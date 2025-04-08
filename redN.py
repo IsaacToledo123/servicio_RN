@@ -23,7 +23,7 @@ app = Flask(__name__)
 
 # Configuración
 IMG_SIZE = (160, 160)
-BATCH_SIZE = 8
+BATCH_SIZE = 16
 EPOCHS = 50
 NUM_CLASSES = 13
 K_FOLDS = 3  # Número de folds para validación cruzada
